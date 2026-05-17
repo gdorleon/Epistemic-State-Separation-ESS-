@@ -1,0 +1,11 @@
+# Inherits defaults; overrides specific to LLaMA-2 7B chat.
+defaults: configs/default.yaml
+
+model:
+  backbone: meta-llama/Llama-2-7b-chat-hf
+  dtype: bfloat16
+
+training:
+  phase2:
+    gradient_checkpointing: true
+    deepspeed: null
