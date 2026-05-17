@@ -1,0 +1,54 @@
+# Default ESS training configuration.
+
+model:
+  backbone: meta-llama/Llama-2-7b-chat-hf
+  dtype: bfloat16
+  load_in_8bit: false
+
+esm:
+  d_e: 64                   # epistemic embedding dim
+  init_layer_weights: uniform
+  layer_dropout: 0.0
+
+egm:
+  tau: 0.45                 # confidence threshold
+  beta: 2.5                 # hedging intensity
+  hedge_init: data-driven   # init from hedge-token list
+
+eco:
+  temperature: 0.07
+  n_negatives: 8
+  lambda_eco: 0.3
+  mu_conf: 0.1
+
+training:
+  phase1:
+    steps: 5000
+    lr: 5.0e-4
+    batch_size: 32
+    freeze_backbone: true
+  phase2:
+    steps: 20000
+    lr: 1.0e-5
+    batch_size: 16
+    freeze_backbone: false
+    gradient_checkpointing: true
+  phase3:
+    steps: 2000
+    lr: 1.0e-4
+    batch_size: 16
+    freeze_backbone: true
+    freeze_esm_projections: true
+
+data:
+  eco_corpus: data/eco_corpus.jsonl
+  self_negatives: data/self_negatives.jsonl
+  conf_corpus: data/factscore_labels.jsonl
+  max_seq_len: 256
+
+output:
+  dir: outputs/
+  save_steps: 1000
+  log_steps: 50
+
+seed: 42
